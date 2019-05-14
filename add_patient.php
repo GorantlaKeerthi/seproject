@@ -17,13 +17,11 @@
 ?>
 <div class="container">
   <h2>Welcome, <?php echo $_SESSION["fullname"];?>!</h2>
-      <div class='alert alert-info'>
-              <strong>Info!</strong> Appointment will be booked only for today - <?php echo date('j/n/y'); ?>. Appointment time will be between 10:30 to 3:30 or 4:30 to 9:30 once appointment is booked.</div>
             <h3>Enter Information</h3>
             <?php
                   if(isset($_POST['apfullname'])){
-                    $i = enter_patient_info($_POST['apfullname'],$_POST['apAge'],$_POST['apweight'],$_POST['apphone_no'],$_POST['apaddress']);
-                    appointment_booking($i, $_POST['apSpecialist'], $_POST['apCondition']);
+                    $i = enter_patient_info($_POST['apfullname'],$_POST['apAge'],$_POST['apgender'],$_POST['apweight'],$_POST['apphone_no'],$_POST['apaddress']);
+                    appointment_booking($i, $_POST['apSpecialist'], $_POST['apCondition'], $_POST['apDate']);
                     unset($_POST['apfullname']); //unset all post variables
                     if (isset($_POST['apfullname'])){
                       echo '<script type="text/javascript">location.reload();</script>';
@@ -42,6 +40,14 @@
               <label for="pwd">Age: (in years)</label>
               <input type="number" class="form-control" id="pwd" name="apAge" min="1" max="200" required>
             </div>
+			<div class="form-group">
+              <label for="pwd">Gender:</label>
+              <select required value=1 name="apgender" class="form-control">
+                <option value="Female" class="option">Female</option>
+                <option value="Male" class="option">Male</option>
+                <option value="Not stated" class="option">Not willing to disclose</option>
+              </select>
+            </div>
             <div class="form-group">
               <label for="pwd">Weight (in kgs):</label>
               <input type="tel" class="form-control" id="pwd" name="apweight" min="1" max="300" required>
@@ -54,10 +60,13 @@
               <label for="pwd">Address:</label>
               <textarea class="form-control" id="pwd" name="apaddress" required></textarea>
             </div>
-
+            <div class="form-group">
+              <label for="pwd">Date:</label>
+			  <input  class="form-control" type="date" name="apDate" min="<?php echo date('Y-m-d'); ?>" required>
+            </div>
             <div class="form-group">
               <label for="pwd">Doctor Needed:</label>
-              <select required value=1 name="apSpecialist">
+              <select required value=1 name="apSpecialist" class="form-control">
                 <option value="Audiologist" class="option">Audiologist - Ear Expert</option>
                 <option value="Allergist" class="option">Allergist - Allergy Expert</option>
                 <option value="Anesthesiologist" class="option">Anesthesiologist - Anesthetic Expert</option>

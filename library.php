@@ -26,7 +26,7 @@
         global $connection;
 
         $email_id = secure($email_id_unsafe);
-        $password = secure($password_unsafe);
+        $password = md5($password_unsafe);
 
         $sql = "SELECT COUNT(*) FROM $table WHERE email = '$email_id' AND password = '$password';";
 
@@ -79,7 +79,7 @@
         global $connection,$error_flag;
 
         $email = secure($email_id_unsafe);
-        $password = secure($password_unsafe);
+        $password = md5($password_unsafe);
         $speciality = secure($speciality_unsafe);
         $fullname = ucfirst(secure($full_name_unsafe));
 
@@ -103,7 +103,7 @@
         if ($connection->query($sql) === true) {
             echo status('record-success');
             if ($table == 'users' && $error_flag == 0) {
-                return login($email, $password);
+                return login($email, $password_unsafe);
             }
         } else {
             echo status('record-fail');
@@ -150,17 +150,18 @@
         }
     }
 
-  function enter_patient_info($full_name_unsafe, $age_unsafe, $weight_unsafe, $phone_no_unsafe, $address_unsafe)
+  function enter_patient_info($full_name_unsafe, $age_unsafe, $gender_unsafe, $weight_unsafe, $phone_no_unsafe, $address_unsafe)
   {
       global $connection, $error_flag,$result;
 
       $full_name = ucfirst(secure($full_name_unsafe));
       $age = secure($age_unsafe);
+	  $gender = secure($gender_unsafe);
       $weight = secure($weight_unsafe);
       $phone_no = secure($phone_no_unsafe);
       $address = secure($address_unsafe);
 
-      $sql = "INSERT INTO `patient_info` VALUES (NULL, '$full_name', $age,$weight, '$phone_no','$address');";
+      $sql = "INSERT INTO `patient_info` VALUES (NULL, '$full_name', $age, '$gender', $weight, '$phone_no','$address');";
 
       if ($connection->query($sql) === true) {
           echo status('record-success');
@@ -173,14 +174,18 @@
       }
   }
 
-    function appointment_booking($patient_id_unsafe, $specialist_unsafe, $medical_condition_unsafe)
+    function appointment_booking($patient_id_unsafe, $specialist_unsafe, $medical_condition_unsafe, $date_unsafe)
     {
         global $connection;
         $patient_id = secure($patient_id_unsafe);
         $specialist = secure($specialist_unsafe);
         $medical_condition = secure($medical_condition_unsafe);
+		$Newdate = date('Y-m-d', strtotime(str_replace('-', '/', $date_unsafe)));
+        //$Newdate = DateTime::createFromFormat('Y-m-d',$date_unsafe);
+		$date = secure($Newdate);
 
-        $sql = "INSERT INTO appointments VALUES (NULL, $patient_id, '$specialist', '$medical_condition', NULL, NULL, 'no')";
+        $sql = "INSERT INTO appointments VALUES (NULL, $patient_id, '$specialist', '$medical_condition', '$date', NULL, NULL, 'no')";
+
 
         if ($connection->query($sql) === true) {
             echo status('appointment-success', $connection->insert_id);
